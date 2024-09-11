@@ -1,0 +1,22 @@
+
+img {
+    width: 200px;
+}
+
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff7300;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+audio {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+}

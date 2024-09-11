@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        div{
+      margin: auto;
+      width: 50%;
+      padding: 200px;
+    }
+    </style>
+        <title>Smart Restaurant System</title>
+    </head>
+    
+    <body>
+        <div><center></center>
+            <img src="static/logo.png" alt="Restaurant Logo">
+        <p id="welcome-msg">Thanks for using our service. Please respond by speaking when it asks you for any input.</p>
+        <button onclick="startRecording()">Start Recording</button>
+        <button onclick="stopRecording()">Stop Recording</button>
+        <p id="response"></p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <audio id="audio" controls></audio></center></div>
+        <script>
+            let chunks = [];
+            let isRecording = false;
+    
+            function startRecording() {
+                isRecording = true;
+                const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.interimResults = true;
+                recognition.lang = "en-US";
+    
+                recognition.onresult = function (event) {
+                    const result = event.results[event.results.length - 1];
+                    const message = result[0].transcript.trim();
+                    document.getElementById("response").innerText = message;
+                    fetch("/process", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ message: message }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const audio = document.getElementById("audio");
+                        audio.src = data.audio_path;
+                        audio.play();
+                    })
+                    .catch(error => console.error("Error:", error));
+                };
+    
+                recognition.onend = function () {
+                    if (isRecording) {
+                        recognition.start();
+                    }
+                };
+    
+                recognition.start();
+            }
+    
+            function stopRecording() {
+                isRecording = false;
+            }
+        </script>
+    </body>
+    </html>
